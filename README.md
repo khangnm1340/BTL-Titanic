@@ -1,4 +1,10 @@
 Đây là một tệp script thực hiện tải dữ liệu, tiền xử lý, kỹ thuật tính năng, huấn luyện mô hình và dự đoán cho bài toán dự đoán sống sót trên tàu Titanic.
+* **Kiểm tra sơ lược về data**:
+![](/images/2025-06-24-140638_hyprshot.png)
+* **Nhập thư viện**:
+* **Nhập thư viện**:
+* **Nhập thư viện**:
+* **Nhập thư viện**:
 
 ## Phần 1: Thiết lập và tải dữ liệu ban đầu
 
