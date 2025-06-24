@@ -1,59 +1,86 @@
-Đây là một tệp script thực hiện tải dữ liệu, tiền xử lý, kỹ thuật tính năng, huấn luyện mô hình và dự đoán cho bài toán dự đoán sống sót trên tàu Titanic.
-* **Kiểm tra sơ lược về data**:
-![](/images/2025-06-24-140638_hyprshot.png)
-* **Nhập thư viện**:
-* **Nhập thư viện**:
-* **Nhập thư viện**:
-* **Nhập thư viện**:
-
 ## Phần 1: Thiết lập và tải dữ liệu ban đầu
 
 * **Nhập thư viện**: Nhập các thư viện cần thiết để thao tác dữ liệu, trực quan hóa và học máy.
 * **Tạo thư mục đầu ra**: Kiểm tra xem thư mục có tên "titanic\_images" có tồn tại không và tạo nếu chưa có để lưu các biểu đồ được tạo.
-* **Tải dữ liệu**: Tải `train.csv` và `test.csv` vào các DataFrame của pandas.
+![](images/2025-06-24-141638_hyprshot.png)
+* **Tải dữ liệu**: Tải `train.csv` vào các DataFrame của pandas.
 
-## Phần 2: Phân tích dữ liệu thăm dò và kỹ thuật tính năng
-
+## Phần 2: Phân tích dữ liệu thăm dò và kỹ thuật tính năng(Exploratory Data Analysis(EDA) and Feature Engineering)
 * **Hiển thị thông tin cơ bản**: Hiển thị phần đầu, thông tin và thống kê mô tả của DataFrame huấn luyện, bao gồm cả số lượng giá trị rỗng.
-* **Phân tích sự sống sót theo các tính năng phân loại**:
-    * Tính toán tỷ lệ sống sót trung bình được nhóm theo `Pclass`, `Sex`, `SibSp` và `Parch`.
+### Kiểm tra sơ lược về data:
+![](/images/2025-06-24-141219_hyprshot.png)
+- Bộ dữ liệu chứa 891 hàng và 12 cột.
+- Các cột bao gồm PassengerId, Survived, Pclass, Name, Sex, Age, SibSp, Parch, Ticket, Fare, Cabin, và Embarked.
+- Một số cột như Age, Cabin và Embarked có giá trị bị thiếu.
+- Các loại dữ liệu bao gồm số nguyên, số thập phân và chuỗi.
+* **Phân tích thống kê (Cột số)**
+![](images/2025-06-24-142255_hyprshot.png)
+`train_df.describe()` cung cấp các thống kê mô tả cho các cột số:
+* **count**: Số lượng giá trị không rỗng (non-null). Lưu ý rằng cột **Age** chỉ có 714 giá trị, nghĩa là có 177 giá trị bị thiếu (891 - 714 = 177).
+* **mean**: Giá trị trung bình của từng cột. Ví dụ, tuổi trung bình là khoảng 29.7. Tỷ lệ sống sót trung bình là 0.38 (tức là khoảng 38.4% hành khách sống sót, vì 1 là sống sót, 0 là không).
+* **std**: Độ lệch chuẩn, cho biết mức độ phân tán của dữ liệu.
+* **min/max**: Giá trị nhỏ nhất và lớn nhất trong mỗi cột. Ví dụ, tuổi nhỏ nhất là 0.42 (trẻ sơ sinh) và lớn nhất là 80.
+* **25%/50%/75% (tứ phân vị)**: Các giá trị tại đó 25%, 50% (trung vị) và 75% dữ liệu nằm dưới ngưỡng đó.
+
+---
+
+* **Phân tích thống kê (Cột phi số)**
+![](/images/2025-06-24-142346_hyprshot.png)
+`train_df.describe(include=["O"])` hiển thị thống kê cho các cột đối tượng (thường là chuỗi):
+* **count**: Tương tự như trên, cho biết số lượng giá trị không rỗng.
+* **unique**: Số lượng giá trị duy nhất trong mỗi cột. Ví dụ, có 891 tên duy nhất (mỗi người một tên), nhưng chỉ có 2 giới tính duy nhất (`male`, `female`).
+* **top**: Giá trị xuất hiện nhiều nhất. Ví dụ, giới tính phổ biến nhất là `male`, và cảng khởi hành phổ biến nhất là 'S' (Southampton).
+* **freq**: Tần suất của giá trị xuất hiện nhiều nhất.
+
+### Phân tích sự sống sót theo các tính năng phân loại
+* Tính toán tỷ lệ sống sót trung bình được nhóm theo `Pclass`, `Sex`, `SibSp` và `Parch`.
+![](/images/2025-06-24-143102_hyprshot.png)
 * **Kỹ thuật tính năng: Kích thước gia đình**:
     * Tạo tính năng `Family_Size` bằng cách cộng `SibSp` (anh chị em/vợ chồng) và `Parch` (cha mẹ/con cái) và thêm 1 (cho chính hành khách).
     * Ánh xạ `Family_Size` thành `Family_Size_Group` (Alone, Small, Medium, Large) để phân loại tốt hơn.
     * Phân tích tỷ lệ sống sót theo `Family_Size_Group`.
+![](/images/2025-06-24-144307_hyprshot.png)
     * **Biểu đồ**: Tạo và lưu biểu đồ tần suất phân bố `Family_Size`.
-    * **Ảnh chụp màn hình 1: `family_size_distribution.png` sẽ ở đây.**
+![](/images/family_size_distribution.png)
+
 * **Phân tích sự sống sót theo tuổi**:
     * **Biểu đồ**: Tạo và lưu biểu đồ phân bố `Age` theo `Survived`.
-    * **Ảnh chụp màn hình 2: `age_distribution_by_survival.png` sẽ ở đây.**
+![](/images/age_distribution_by_survival.png)
     * **Kỹ thuật tính năng: Phân nhóm tuổi**:
         * Tạo `Age_Cut` bằng cách phân vị tính năng `Age` thành 8 nhóm.
+![](/images/2025-06-24-150251_hyprshot.png)
         * Phân nhóm: Thay thế các giá trị `Age` liên tục bằng các danh mục số nguyên (0-8) dựa trên các điểm cắt phân vị này.
+![](/images/2025-06-24-145638_hyprshot.png)
         * **Biểu đồ**: Tạo và lưu biểu đồ tần suất `Age` ban đầu với các điểm cắt phân vị.
-        * **Ảnh chụp màn hình 3: `original_age_with_cuts_distribution.png` sẽ ở đây.**
-        * **Biểu đồ**: Tạo và lưu biểu đồ tần suất các danh mục `Age` đã được phân nhóm.
-        * **Ảnh chụp màn hình 4: `binned_age_distribution.png` sẽ ở đây.**
+![](/images/original_age_with_cuts_distribution.png)
+
 * **Phân tích sự sống sót theo giá vé**:
     * **Biểu đồ**: Tạo và lưu biểu đồ phân bố `Fare` theo `Survived`.
-    * **Ảnh chụp màn hình 5: `fare_distribution_by_survival.png` sẽ ở đây.**
+![](/images/fare_distribution_by_survival.png)
     * **Kỹ thuật tính năng: Phân nhóm giá vé**:
         * Tạo `Fare_Cut` bằng cách phân vị tính năng `Fare` thành 8 nhóm.
+![](/images/2025-06-24-145248_hyprshot.png)
         * Phân nhóm: Thay thế các giá trị `Fare` liên tục bằng các danh mục số nguyên (0-8) dựa trên các điểm cắt phân vị này.
+![](/images/2025-06-24-150559_hyprshot.png)
         * **Biểu đồ**: Tạo và lưu biểu đồ tần suất `Fare` ban đầu với các điểm cắt phân vị.
-        * **Ảnh chụp màn hình 6: `original_fare_with_cuts_distribution.png` sẽ ở đây.**
+![](/images/original_fare_with_cuts_distribution.png)
         * **Biểu đồ**: Tạo và lưu biểu đồ tần suất các danh mục `Fare` đã được phân nhóm.
-        * **Ảnh chụp màn hình 7: `binned_fare_distribution.png` sẽ ở đây.**
+![](/images/binned_fare_distribution.png)
 * **Kỹ thuật tính năng: Tiêu đề từ tên**:
+    * Ban đầu: 
+![](/images/2025-06-24_ten_ban_dau.png)
     * Trích xuất `Title` (ví dụ: Mr., Mrs., Miss) từ cột `Name`.
     * Chuẩn hóa các tiêu đề khác nhau thành các danh mục rộng hơn (ví dụ: "Mlle" thành "Miss", "Capt" thành "Military").
     * Phân tích tỷ lệ sống sót theo `Title`.
+    * Sau Khi tách và gộp:
+![](/images/2025-06-24-151221_sau_khi_tach_va_gop.png)
 * **Kỹ thuật tính năng: Độ dài tên**:
     * Tính toán `Name_Length`.
     * **Biểu đồ**: Tạo và lưu các biểu đồ KDE về `Name_Length` cho hành khách sống sót và không sống sót.
-    * **Ảnh chụp màn hình 8: `Name_length_Survived.png` sẽ ở đây.**
+![](/images/Name_length_Survived.png)
     * Phân nhóm: Chia `Name_Length` thành các danh mục `Name_Size` (0-8) dựa trên các phân vị.
     * **Biểu đồ**: Tạo và lưu biểu đồ tần suất phân bố `Name_Length`.
-    * **Ảnh chụp màn hình 9: `name_length_distribution.png` sẽ ở đây.**
+![](/images/name_length_distribution.png)
 * **Kỹ thuật tính năng: Thông tin vé**:
     * Trích xuất `TicketNumber` (phần cuối cùng của chuỗi vé).
     * Tính toán `TicketNumberCounts` (số lần một số vé xuất hiện).
