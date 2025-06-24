@@ -1,129 +1,129 @@
-This script performs data loading, preprocessing, feature engineering, model training, and prediction for the Titanic survival prediction problem.
+Đây là một tệp script thực hiện tải dữ liệu, tiền xử lý, kỹ thuật tính năng, huấn luyện mô hình và dự đoán cho bài toán dự đoán sống sót trên tàu Titanic.
 
-## Part 1: Setup and Initial Data Loading
+## Phần 1: Thiết lập và tải dữ liệu ban đầu
 
-* **Import Libraries**: Imports necessary libraries for data manipulation, visualization, and machine learning.
-* **Create Output Directory**: Checks if a directory named "titanic\_images" exists, and creates it if not, to save generated plots.
-* **Load Data**: Loads `train.csv` and `test.csv` into pandas DataFrames.
+* **Nhập thư viện**: Nhập các thư viện cần thiết để thao tác dữ liệu, trực quan hóa và học máy.
+* **Tạo thư mục đầu ra**: Kiểm tra xem thư mục có tên "titanic\_images" có tồn tại không và tạo nếu chưa có để lưu các biểu đồ được tạo.
+* **Tải dữ liệu**: Tải `train.csv` và `test.csv` vào các DataFrame của pandas.
 
-## Part 2: Exploratory Data Analysis and Feature Engineering
+## Phần 2: Phân tích dữ liệu thăm dò và kỹ thuật tính năng
 
-* **Display Basic Information**: Shows the head, info, and descriptive statistics of the training DataFrame, including null value counts.
-* **Analyze Survival by Categorical Features**:
-    * Calculates the mean survival rate grouped by `Pclass`, `Sex`, `SibSp`, and `Parch`.
-* **Feature Engineering: Family Size**:
-    * Creates a `Family_Size` feature by summing `SibSp` (siblings/spouses) and `Parch` (parents/children) and adding 1 (for the passenger themselves).
-    * Maps `Family_Size` to `Family_Size_Group` (Alone, Small, Medium, Large) for better categorization.
-    * Analyzes survival rate by `Family_Size_Group`.
-    * **Plot**: Generates and saves a histogram of `Family_Size` distribution.
-    * **Screenshot 1: `family_size_distribution.png` should be here.**
-* **Analyze Survival by Age**:
-    * **Plot**: Generates and saves a distribution plot of `Age` by `Survived`.
-    * **Screenshot 2: `age_distribution_by_survival.png` should be here.**
-    * **Feature Engineering: Age Binning**:
-        * Creates `Age_Cut` by quantiling the `Age` feature into 8 bins.
-        * Binning: Replaces continuous `Age` values with integer categories (0-8) based on these quantile cuts.
-        * **Plot**: Generates and saves a histogram of original `Age` with quantile cut points.
-        * **Screenshot 3: `original_age_with_cuts_distribution.png` should be here.**
-        * **Plot**: Generates and saves a histogram of the binned `Age` categories.
-        * **Screenshot 4: `binned_age_distribution.png` should be here.**
-* **Analyze Survival by Fare**:
-    * **Plot**: Generates and saves a distribution plot of `Fare` by `Survived`.
-    * **Screenshot 5: `fare_distribution_by_survival.png` should be here.**
-    * **Feature Engineering: Fare Binning**:
-        * Creates `Fare_Cut` by quantiling the `Fare` feature into 8 bins.
-        * Binning: Replaces continuous `Fare` values with integer categories (0-8) based on these quantile cuts.
-        * **Plot**: Generates and saves a histogram of original `Fare` with quantile cut points.
-        * **Screenshot 6: `original_fare_with_cuts_distribution.png` should be here.**
-        * **Plot**: Generates and saves a histogram of the binned `Fare` categories.
-        * **Screenshot 7: `binned_fare_distribution.png` should be here.**
-* **Feature Engineering: Title from Name**:
-    * Extracts `Title` (e.g., Mr., Mrs., Miss) from the `Name` column.
-    * Normalizes various titles into broader categories (e.g., "Mlle" to "Miss", "Capt" to "Military").
-    * Analyzes survival rate by `Title`.
-* **Feature Engineering: Name Length**:
-    * Calculates `Name_Length`.
-    * **Plot**: Generates and saves KDE plots of `Name_Length` for survived and not-survived passengers.
-    * **Screenshot 8: `Name_length_Survived.png` should be here.**
-    * Binning: Divides `Name_Length` into `Name_Size` categories (0-8) based on quantiles.
-    * **Plot**: Generates and saves a histogram of `Name_Length` distribution.
-    * **Screenshot 9: `name_length_distribution.png` should be here.**
-* **Feature Engineering: Ticket Information**:
-    * Extracts `TicketNumber` (the last part of the ticket string).
-    * Calculates `TicketNumberCounts` (how many times a ticket number appears).
-    * Extracts `TicketLocation` (the prefix of the ticket string if present).
-    * Normalizes various `TicketLocation` values.
-* **Feature Engineering: Cabin Information**:
-    * Fills missing `Cabin` values with "U" (unknown).
-    * Extracts the first letter of the `Cabin` as the new `Cabin` category.
-    * Creates `Cabin_Assigned` (0 if 'U', 1 otherwise).
-    * Analyzes survival rate by `Cabin` and `Cabin_Assigned`.
-* **Handle Missing Numerical Values**:
-    * Fills missing `Age` and `Fare` values with their respective means.
+* **Hiển thị thông tin cơ bản**: Hiển thị phần đầu, thông tin và thống kê mô tả của DataFrame huấn luyện, bao gồm cả số lượng giá trị rỗng.
+* **Phân tích sự sống sót theo các tính năng phân loại**:
+    * Tính toán tỷ lệ sống sót trung bình được nhóm theo `Pclass`, `Sex`, `SibSp` và `Parch`.
+* **Kỹ thuật tính năng: Kích thước gia đình**:
+    * Tạo tính năng `Family_Size` bằng cách cộng `SibSp` (anh chị em/vợ chồng) và `Parch` (cha mẹ/con cái) và thêm 1 (cho chính hành khách).
+    * Ánh xạ `Family_Size` thành `Family_Size_Group` (Alone, Small, Medium, Large) để phân loại tốt hơn.
+    * Phân tích tỷ lệ sống sót theo `Family_Size_Group`.
+    * **Biểu đồ**: Tạo và lưu biểu đồ tần suất phân bố `Family_Size`.
+    * **Ảnh chụp màn hình 1: `family_size_distribution.png` sẽ ở đây.**
+* **Phân tích sự sống sót theo tuổi**:
+    * **Biểu đồ**: Tạo và lưu biểu đồ phân bố `Age` theo `Survived`.
+    * **Ảnh chụp màn hình 2: `age_distribution_by_survival.png` sẽ ở đây.**
+    * **Kỹ thuật tính năng: Phân nhóm tuổi**:
+        * Tạo `Age_Cut` bằng cách phân vị tính năng `Age` thành 8 nhóm.
+        * Phân nhóm: Thay thế các giá trị `Age` liên tục bằng các danh mục số nguyên (0-8) dựa trên các điểm cắt phân vị này.
+        * **Biểu đồ**: Tạo và lưu biểu đồ tần suất `Age` ban đầu với các điểm cắt phân vị.
+        * **Ảnh chụp màn hình 3: `original_age_with_cuts_distribution.png` sẽ ở đây.**
+        * **Biểu đồ**: Tạo và lưu biểu đồ tần suất các danh mục `Age` đã được phân nhóm.
+        * **Ảnh chụp màn hình 4: `binned_age_distribution.png` sẽ ở đây.**
+* **Phân tích sự sống sót theo giá vé**:
+    * **Biểu đồ**: Tạo và lưu biểu đồ phân bố `Fare` theo `Survived`.
+    * **Ảnh chụp màn hình 5: `fare_distribution_by_survival.png` sẽ ở đây.**
+    * **Kỹ thuật tính năng: Phân nhóm giá vé**:
+        * Tạo `Fare_Cut` bằng cách phân vị tính năng `Fare` thành 8 nhóm.
+        * Phân nhóm: Thay thế các giá trị `Fare` liên tục bằng các danh mục số nguyên (0-8) dựa trên các điểm cắt phân vị này.
+        * **Biểu đồ**: Tạo và lưu biểu đồ tần suất `Fare` ban đầu với các điểm cắt phân vị.
+        * **Ảnh chụp màn hình 6: `original_fare_with_cuts_distribution.png` sẽ ở đây.**
+        * **Biểu đồ**: Tạo và lưu biểu đồ tần suất các danh mục `Fare` đã được phân nhóm.
+        * **Ảnh chụp màn hình 7: `binned_fare_distribution.png` sẽ ở đây.**
+* **Kỹ thuật tính năng: Tiêu đề từ tên**:
+    * Trích xuất `Title` (ví dụ: Mr., Mrs., Miss) từ cột `Name`.
+    * Chuẩn hóa các tiêu đề khác nhau thành các danh mục rộng hơn (ví dụ: "Mlle" thành "Miss", "Capt" thành "Military").
+    * Phân tích tỷ lệ sống sót theo `Title`.
+* **Kỹ thuật tính năng: Độ dài tên**:
+    * Tính toán `Name_Length`.
+    * **Biểu đồ**: Tạo và lưu các biểu đồ KDE về `Name_Length` cho hành khách sống sót và không sống sót.
+    * **Ảnh chụp màn hình 8: `Name_length_Survived.png` sẽ ở đây.**
+    * Phân nhóm: Chia `Name_Length` thành các danh mục `Name_Size` (0-8) dựa trên các phân vị.
+    * **Biểu đồ**: Tạo và lưu biểu đồ tần suất phân bố `Name_Length`.
+    * **Ảnh chụp màn hình 9: `name_length_distribution.png` sẽ ở đây.**
+* **Kỹ thuật tính năng: Thông tin vé**:
+    * Trích xuất `TicketNumber` (phần cuối cùng của chuỗi vé).
+    * Tính toán `TicketNumberCounts` (số lần một số vé xuất hiện).
+    * Trích xuất `TicketLocation` (tiền tố của chuỗi vé nếu có).
+    * Chuẩn hóa các giá trị `TicketLocation` khác nhau.
+* **Kỹ thuật tính năng: Thông tin cabin**:
+    * Điền các giá trị `Cabin` bị thiếu bằng "U" (không xác định).
+    * Trích xuất chữ cái đầu tiên của `Cabin` làm danh mục `Cabin` mới.
+    * Tạo `Cabin_Assigned` (0 nếu 'U', 1 nếu khác).
+    * Phân tích tỷ lệ sống sót theo `Cabin` và `Cabin_Assigned`.
+* **Xử lý các giá trị số bị thiếu**:
+    * Điền các giá trị `Age` và `Fare` bị thiếu bằng giá trị trung bình tương ứng của chúng.
 
-## Part 3: Model Preprocessing Pipeline
+## Phần 3: Chu trình tiền xử lý mô hình
 
-* **Define Preprocessing Steps**:
-    * `OrdinalEncoder`: For features like `Family_Size_Group`.
-    * `OneHotEncoder`: For categorical features like `Sex` and `Embarked`.
-    * `SimpleImputer`: To handle missing values (though most are handled, this acts as a safeguard).
-* **Define Target and Features**:
-    * `X`: Features for training (dropping `Survived`).
-    * `y`: Target variable (`Survived`).
-    * `X_test`: Features for prediction.
-* **Split Data**: Divides the training data into `X_train`, `X_valid`, `y_train`, `y_valid` using `train_test_split` with stratification.
-* **Create Preprocessing Pipelines**:
-    * `ordinal_pipeline`: Imputes missing values with the most frequent, then applies `OrdinalEncoder`.
-    * `ohe_pipeline`: Imputes missing values with the most frequent, then applies `OneHotEncoder`.
+* **Xác định các bước tiền xử lý**:
+    * `OrdinalEncoder`: Đối với các tính năng như `Family_Size_Group`.
+    * `OneHotEncoder`: Đối với các tính năng phân loại như `Sex` và `Embarked`.
+    * `SimpleImputer`: Để xử lý các giá trị bị thiếu (mặc dù hầu hết đã được xử lý, nhưng đây là một biện pháp bảo vệ).
+* **Xác định mục tiêu và tính năng**:
+    * `X`: Các tính năng để huấn luyện (bỏ `Survived`).
+    * `y`: Biến mục tiêu (`Survived`).
+    * `X_test`: Các tính năng để dự đoán.
+* **Chia dữ liệu**: Chia dữ liệu huấn luyện thành `X_train`, `X_valid`, `y_train`, `y_valid` bằng cách sử dụng `train_test_split` với phân tầng.
+* **Tạo các chu trình tiền xử lý**:
+    * `ordinal_pipeline`: Điền các giá trị bị thiếu bằng giá trị phổ biến nhất, sau đó áp dụng `OrdinalEncoder`.
+    * `ohe_pipeline`: Điền các giá trị bị thiếu bằng giá trị phổ biến nhất, sau đó áp dụng `OneHotEncoder`.
 * **ColumnTransformer**:
-    * Applies different preprocessing steps to different columns:
-        * `Age` is imputed.
-        * `Family_Size_Group` uses `ordinal_pipeline`.
-        * `Sex` and `Embarked` use `ohe_pipeline`.
-        * `Pclass`, `TicketNumberCounts`, `Cabin_Assigned`, `Name_Size` are passed through without transformation.
+    * Áp dụng các bước tiền xử lý khác nhau cho các cột khác nhau:
+        * `Age` được điền.
+        * `Family_Size_Group` sử dụng `ordinal_pipeline`.
+        * `Sex` và `Embarked` sử dụng `ohe_pipeline`.
+        * `Pclass`, `TicketNumberCounts`, `Cabin_Assigned`, `Name_Size` được truyền qua mà không chuyển đổi.
 
-## Part 4: Model Training and Evaluation (with GridSearchCV)
+## Phần 4: Huấn luyện và đánh giá mô hình (với GridSearchCV)
 
-* This section systematically trains and tunes several classification models using `GridSearchCV` for hyperparameter optimization and `StratifiedKFold` for robust cross-validation.
+* Phần này huấn luyện và điều chỉnh một cách có hệ thống một số mô hình phân loại bằng cách sử dụng `GridSearchCV` để tối ưu hóa siêu tham số và `StratifiedKFold` để xác thực chéo mạnh mẽ.
 * **RandomForestClassifier (rfc)**:
-    * Defines a parameter grid for `n_estimators`, `min_samples_split`, `max_depth`, `min_samples_leaf`, and `criterion`.
-    * Performs `GridSearchCV`.
-    * Prints the best parameters and best cross-validation score.
-    * **Screenshot 10: Print output for `CV_rfc.best_params_` and `CV_rfc.best_score_` should be here.**
+    * Xác định lưới tham số cho `n_estimators`, `min_samples_split`, `max_depth`, `min_samples_leaf` và `criterion`.
+    * Thực hiện `GridSearchCV`.
+    * In các tham số tốt nhất và điểm xác thực chéo tốt nhất.
+    * **Ảnh chụp màn hình 10: Đầu ra in cho `CV_rfc.best_params_` và `CV_rfc.best_score_` sẽ ở đây.**
 * **DecisionTreeClassifier (dtc)**:
-    * Defines a parameter grid.
-    * Performs `GridSearchCV`.
-    * Prints the best parameters and best cross-validation score.
-    * **Screenshot 11: Print output for `CV_dtc.best_params_` and `CV_dtc.best_score_` should be here.**
+    * Xác định lưới tham số.
+    * Thực hiện `GridSearchCV`.
+    * In các tham số tốt nhất và điểm xác thực chéo tốt nhất.
+    * **Ảnh chụp màn hình 11: Đầu ra in cho `CV_dtc.best_params_` và `CV_dtc.best_score_` sẽ ở đây.**
 * **KNeighborsClassifier (knn)**:
-    * Defines a parameter grid.
-    * Performs `GridSearchCV`.
-    * Prints the best parameters and best cross-validation score.
-    * **Screenshot 12: Print output for `CV_knn.best_params_` and `CV_knn.best_score_` should be here.**
+    * Xác định lưới tham số.
+    * Thực hiện `GridSearchCV`.
+    * In các tham số tốt nhất và điểm xác thực chéo tốt nhất.
+    * **Ảnh chụp màn hình 12: Đầu ra in cho `CV_knn.best_params_` và `CV_knn.best_score_` sẽ ở đây.**
 * **SVC (svc)**:
-    * Defines a parameter grid.
-    * Performs `GridSearchCV`.
-    * Prints the best parameters and best cross-validation score.
-    * **Screenshot 13: Print output for `CV_svc.best_params_` and `CV_svc.best_score_` should be here.**
+    * Xác định lưới tham số.
+    * Thực hiện `GridSearchCV`.
+    * In các tham số tốt nhất và điểm xác thực chéo tốt nhất.
+    * **Ảnh chụp màn hình 13: Đầu ra in cho `CV_svc.best_params_` và `CV_svc.best_score_` sẽ ở đây.**
 * **LogisticRegression (lr)**:
-    * Defines a parameter grid.
-    * Performs `GridSearchCV`.
-    * Prints the best parameters and best cross-validation score.
-    * **Screenshot 14: Print output for `CV_lr.best_params_` and `CV_lr.best_score_` should be here.**
+    * Xác định lưới tham số.
+    * Thực hiện `GridSearchCV`.
+    * In các tham số tốt nhất và điểm xác thực chéo tốt nhất.
+    * **Ảnh chụp màn hình 14: Đầu ra in cho `CV_lr.best_params_` và `CV_lr.best_score_` sẽ ở đây.**
 * **GaussianNB (gnb)**:
-    * Defines a parameter grid.
-    * Performs `GridSearchCV`.
-    * Prints the best parameters and best cross-validation score.
-    * **Screenshot 15: Print output for `CV_gnb.best_params_` and `CV_gnb.best_score_` should be here.**
+    * Xác định lưới tham số.
+    * Thực hiện `GridSearchCV`.
+    * In các tham số tốt nhất và điểm xác thực chéo tốt nhất.
+    * **Ảnh chụp màn hình 15: Đầu ra in cho `CV_gnb.best_params_` và `CV_gnb.best_score_` sẽ ở đây.**
 
-## Part 5: Prediction and Output
+## Phần 5: Dự đoán và xuất kết quả
 
-* **Make Predictions**: Uses the `pipefinaldtc` (Decision Tree Classifier with the best parameters from GridSearchCV) to make predictions on the `X_test` dataset.
-* **Save Results**:
-    * Creates a new DataFrame `test_results_df` by copying `test_df`.
-    * Adds the `Survived_Prediction` column to `test_results_df`.
-    * Reorders columns for better readability.
-    * Saves the `test_results_df` to a CSV file named `detailed_predictions.csv`.
-    * Reads the saved CSV back in for verification.
-    * Prints the head of a subset DataFrame containing `PassengerId` and `Survived_Prediction`.
-    * **Screenshot 16: The head of the `subset_df` (PassengerId and Survived_Prediction) printed to console should be here.**
+* **Thực hiện dự đoán**: Sử dụng `pipefinaldtc` (Mô hình cây quyết định với các tham số tốt nhất từ GridSearchCV) để đưa ra dự đoán trên tập dữ liệu `X_test`.
+* **Lưu kết quả**:
+    * Tạo một DataFrame mới `test_results_df` bằng cách sao chép `test_df`.
+    * Thêm cột `Survived_Prediction` vào `test_results_df`.
+    * Sắp xếp lại các cột để dễ đọc hơn.
+    * Lưu `test_results_df` vào tệp CSV có tên `detailed_predictions.csv`.
+    * Đọc lại tệp CSV đã lưu để xác minh.
+    * In phần đầu của một DataFrame con chứa `PassengerId` và `Survived_Prediction`.
+    * **Ảnh chụp màn hình 16: Phần đầu của `subset_df` (PassengerId và Survived_Prediction) được in ra console sẽ ở đây.**
